@@ -7,9 +7,8 @@ import time
 import plotly.express as px # interactive charts 
 
 # read csv from a github repo
-df = pd.read_csv("https://raw.githubusercontent.com/Lexie88rus/bank-marketing-analysis/master/bank.csv")
-
-df.to_csv('bank.csv')
+#df = pd.read_csv("https://raw.githubusercontent.com/Lexie88rus/bank-marketing-analysis/master/bank.csv")
+df = pd.read_csv("bank.csv") 
 
 st.set_page_config(
     page_title = 'Real-Time Data Science Dashboard',
