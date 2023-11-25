@@ -12,10 +12,12 @@ y = torch.tensor([2, 2, 2, 2])
 print(x.shape)
 # total number of tensor nodes
 print(x.numel())
-
-
 print(x+y, x-y, x*y, x/y, x**y)
 print(torch.exp(x))
+
+# tensors initialized to contain all 0s or 1s.
+torch.zeros((2, 3, 4))
+torch.ones((2, 3, 4))
 
 # generate random 12 numbers and reshape it to 3 by 4 matrix  
 x = torch.randn(12).reshape(3,4)
