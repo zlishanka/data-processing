@@ -9,21 +9,36 @@ import torch
 
 x = torch.tensor([1.0, 2, 4, 8])
 y = torch.tensor([2, 2, 2, 2])
-print(x.shape)
+
+print(' ')
+print("---- torch arithmetic operations ----")
+print(f'x = {x}, x.shape = {x.shape}')
 # total number of tensor nodes
-print(x.numel())
-print(x+y, x-y, x*y, x/y, x**y)
-print(torch.exp(x))
-
+print(f'x = {x}, x.numel = {x.numel()}')
+print(f'x = {x}, y= {y}, x+y = {x+y}, x-y = {x-y}')
+print(f'x*y = {x*y}, x/y = {x/y}, x**y = {x**y}')
+print(f'x = {x}, exp(x) = {torch.exp(x)}')
+print(' ')
 # tensors initialized to contain all 0s or 1s.
-torch.zeros((2, 3, 4))
-torch.ones((2, 3, 4))
+print("---- torch initialization ----")
+print(f'torch.zeros((2, 3, 4)  =  {torch.zeros(2,3,4)}')
+print(f'torch.ones((2, 3, 4)  =  {torch.ones(2,3,4)}')
+print(f'torch.arange(-2,5,1,dtype=torch.float32)  =  {torch.arange(-2,5,1,dtype=torch.float32)}')
+print(f'torch.randn(5)  =  {torch.randn(5)}')
+print(' ')
 
+
+print("---- torch sum, mean, norm ----")
 # generate random 12 numbers and reshape it to 3 by 4 matrix  
 x = torch.randn(12).reshape(3,4)
-
+print(f'torch.randn(12).reshape(3,4) = {x}')
 # get maen, sum, norm (l2 normalization) 
-print(x, x.mean(), x.sum(), x.norm())
+print(f'x.mean() = {x.mean()}, x.sum() = {x.sum()}, x.norm()={x.norm()}')
+
+# l1 norm 
+x = torch.arange(-2,4, dtype=torch.float32)
+print(f'x={x}, norm1(x) = {torch.abs(x).sum()}')
+print(f'x={x}, norm2(x) = {x.norm()}')
 
 X = torch.tensor([[ 0.,  1.,  2.,  3.],
          [ 4.,  5.,  6.,  7.],
