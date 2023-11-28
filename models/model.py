@@ -5,6 +5,7 @@ from torch import nn
 from torch.nn import functional as F 
 
 from utils.util import HyperParameters
+from utils.util import ProgressBoard
 
 class Module(nn.Module, HyperParameters):
     """The base class of models."""

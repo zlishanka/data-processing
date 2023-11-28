@@ -70,6 +70,20 @@ class HyperParameters:
         for k, v in self.hparams.items():
             setattr(self, k, v)
 
+class SGD(HyperParameters):
+    """Minibatch stochastic gradient descent."""
+    def __init__(self, params, lr):
+        self.save_hyperparameters()
+
+    def step(self):
+        for param in self.params:
+            param -= self.lr * param.grad
+
+    def zero_grad(self):
+        for param in self.params:
+            if param.grad is not None:
+                param.grad.zero_() 
+                
 class ProgressBoard(HyperParameters):
     """The board that plots data points in animation."""
     def __init__(self, xlabel=None, ylabel=None, xlim=None,
