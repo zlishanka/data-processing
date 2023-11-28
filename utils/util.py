@@ -1,8 +1,13 @@
 import collections
 import inspect
+import torch
 
 from matplotlib import pyplot as plt
 from matplotlib_inline import backend_inline
+
+def cpu():
+    """Get the CPU device."""
+    return torch.device('cpu')
 
 def use_svg_display():
     """Use the svg format to display a plot."""

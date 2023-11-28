@@ -5,7 +5,7 @@ from torch import nn
 from torch.nn import functional as F 
 
 from utils.util import HyperParameters
-from utils.util import ProgressBoard
+from utils.util import ProgressBoard, cpu
 
 class Module(nn.Module, HyperParameters):
     """The base class of models."""
@@ -35,7 +35,7 @@ class Module(nn.Module, HyperParameters):
             x = self.trainer.epoch + 1
             n = self.trainer.num_val_batches / \
                 self.plot_valid_per_epoch
-        self.board.draw(x, value.to(d2l.cpu()).detach().numpy(),
+        self.board.draw(x, value.to(cpu()).detach().numpy(),
                         ('train_' if train else 'val_') + key,
                         every_n=int(n))
     

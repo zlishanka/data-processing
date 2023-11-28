@@ -1,10 +1,11 @@
 import torch
+import matplotlib.pyplot as plt
 
 from models import model
 from utils.util import add_to_class
 from utils.util import HyperParameters, SGD
 from models.train import Trainer
-from models.data import SyntheticRegressionData
+from models.data import SyntheticRegressionData, DataModule
 
 class LinearRegressionScratch(model.Module):
     """The linear regression model implemented from scratch."""
@@ -25,7 +26,7 @@ def loss(self, y_hat, y):
 
 @add_to_class(LinearRegressionScratch)
 def configure_optimizers(self):
-    return SGD([self.w, selfb], self.lr)
+    return SGD([self.w, self.b], self.lr)
 
 # Training 
 # all of the parts in place (parameters, loss function, model, and optimizer)
@@ -47,7 +48,7 @@ def prepare_batch(self, batch):
 def fit_epoch(self):
     self.model.train()
     for batch in self.train_dataloader:
-        loss = self.training_step(self.prepare_batch(batch))
+        loss = self.model.training_step(self.prepare_batch(batch))
         self.optim.zero_grad()
         with torch.no_grad():
             loss.backward()
@@ -63,7 +64,23 @@ def fit_epoch(self):
             self.model.validation_step(self.prepare_batch(batch))
         self.val_batch_idx += 1
 
+
+@add_to_class(DataModule)
+def get_tensorloader(self, tensors, train, indices=slice(0, None)):
+    """it is more efficient and has some added functionality."""
+    tensors = tuple(a[indices] for a in tensors)
+    dataset = torch.utils.data.TensorDataset(*tensors)
+    return torch.utils.data.DataLoader(dataset, self.batch_size,
+                                       shuffle=train)
+    
+# define dataloader 
+@add_to_class(SyntheticRegressionData)
+def get_dataloader(self, train):
+    i = slice(0, self.num_train) if train else slice(self.num_train, None)
+    return self.get_tensorloader((self.X, self.y), train, i)
+
 model = LinearRegressionScratch(2, lr=0.03)
 data = SyntheticRegressionData(w=torch.tensor([2, -3.4]), b=4.2)
 trainer = Trainer(max_epochs=3)
 trainer.fit(model, data)
+plt.show()
