@@ -41,3 +41,15 @@ data = SyntheticRegressionData(w=torch.tensor([2, -3.4]), b=4.2)
 trainer = Trainer(max_epochs=3)
 trainer.fit(model, data)
 plt.show()
+
+# Compare the model parameters learned by training on finite data 
+# and the actual parameters that generated our dataset.
+@add_to_class(LinearRegression)  
+def get_w_b(self):
+    return (self.net.weight.data, self.net.bias.data)
+
+w, b = model.get_w_b()
+
+print(f'error in estimating w: {data.w - w.reshape(data.w.shape)}')
+print(f'error in estimating b: {data.b - b}')
+
