@@ -4,9 +4,10 @@ import torch
 from torch import nn
 from torch.nn import functional as F 
 
-from utils.util import HyperParameters
+from utils.util import HyperParameters, SGD
 from utils.util import ProgressBoard, cpu
 
+reduce_mean = lambda x, *args, **kwargs: x.mean(*args, **kwargs)
 class Module(nn.Module, HyperParameters):
     """The base class of models."""
     def __init__(self, plot_train_per_epoch=2, plot_valid_per_epoch=1):
@@ -53,3 +54,52 @@ class Module(nn.Module, HyperParameters):
         """returns the optimization method, or a list of them, 
         that is used to update the learnable parameters"""
         raise NotImplementedError
+    
+class LinearRegressionScratch(Module):
+    """The linear regression model implemented from scratch.
+
+    Defined in :numref:`sec_linear_scratch`"""
+    def __init__(self, num_inputs, lr, sigma=0.01):
+        super().__init__()
+        self.save_hyperparameters()
+        self.w = torch.normal(0, sigma, (num_inputs, 1), requires_grad=True)
+        self.b = torch.zeros(1, requires_grad=True)
+
+    def forward(self, X):
+        """Defined in :numref:`sec_linear_scratch`"""
+        return torch.matmul(X, self.w) + self.b
+
+    def loss(self, y_hat, y):
+        """Defined in :numref:`sec_linear_scratch`"""
+        l = (y_hat - y) ** 2 / 2
+        return reduce_mean(l)
+
+    def configure_optimizers(self):
+        """Defined in :numref:`sec_linear_scratch`"""
+        return SGD([self.w, self.b], self.lr)
+
+class LinearRegression(Module):
+    """The linear regression model implemented with high-level APIs."""
+    def __init__(self, lr):
+        super().__init__()
+        self.save_hyperparameters()
+        self.net = nn.LazyLinear(1)
+        self.net.weight.data.normal_(0, 0.01)
+        self.net.bias.data.fill_(0)
+
+    def forward(self, X):
+        """Defined in :numref:`sec_linear_concise`"""
+        return self.net(X)
+
+    def loss(self, y_hat, y):
+        """Defined in :numref:`sec_linear_concise`"""
+        fn = nn.MSELoss()
+        return fn(y_hat, y)
+
+    def configure_optimizers(self):
+        """Defined in :numref:`sec_linear_concise`"""
+        return torch.optim.SGD(self.parameters(), self.lr)
+
+    def get_w_b(self):
+        """Defined in :numref:`sec_linear_concise`"""
+        return (self.net.weight.data, self.net.bias.data)
