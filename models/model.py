@@ -50,10 +50,14 @@ class Module(nn.Module, HyperParameters):
         l = self.loss(self(*batch[:-1]), batch[-1])
         self.plot('loss', l, train=False)
     
-    def configure_opt(self):
+    def configure_optimizer(self):
         """returns the optimization method, or a list of them, 
         that is used to update the learnable parameters"""
         raise NotImplementedError
+    
+    def configure_optimizers(self):
+        return torch.optim.SGD(self.parameters(), lr=self.lr)
+
     
 class LinearRegressionScratch(Module):
     """The linear regression model implemented from scratch.
@@ -103,3 +107,17 @@ class LinearRegression(Module):
     def get_w_b(self):
         """Defined in :numref:`sec_linear_concise`"""
         return (self.net.weight.data, self.net.bias.data)
+    
+class Classifier(Module):  #@save
+    """The base class of classification models."""
+    def validation_step(self, batch):
+        Y_hat = self(*batch[:-1])
+        self.plot('loss', self.loss(Y_hat, batch[-1]), train=False)
+        self.plot('acc', self.accuracy(Y_hat, batch[-1]), train=False)
+
+    def accuracy(self, Y_hat, Y, averaged=True):
+        """Compute the number of correct predictions."""
+        Y_hat = Y_hat.reshape((-1, Y_hat.shape[-1]))
+        preds = Y_hat.argmax(axis=1).type(Y.dtype)
+        compare = (preds == Y.reshape(-1)).type(torch.float32)
+        return compare.mean() if averaged else compare

@@ -5,6 +5,8 @@ import torch
 from matplotlib import pyplot as plt
 from matplotlib_inline import backend_inline
 
+numpy = lambda x, *args, **kwargs: x.detach().numpy(*args, **kwargs)
+
 def cpu():
     """Get the CPU device."""
     return torch.device('cpu')
@@ -51,7 +53,26 @@ def plot(X, Y=None, xlabel=None, ylabel=None, legend=[], xlim=None,
     for x, y, fmt in zip(X, Y, fmts):
         axes.plot(x,y,fmt) if len(x) else axes.plot(y,fmt)
     set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend)
-    
+
+def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
+    """Plot a list of images.
+
+    Defined in :numref:`sec_utils`"""
+    figsize = (num_cols * scale, num_rows * scale)
+    _, axes = plt.subplots(num_rows, num_cols, figsize=figsize)
+    axes = axes.flatten()
+    for i, (ax, img) in enumerate(zip(axes, imgs)):
+        try:
+            img = numpy(img)
+        except:
+            pass
+        ax.imshow(img)
+        ax.axes.get_xaxis().set_visible(False)
+        ax.axes.get_yaxis().set_visible(False)
+        if titles:
+            ax.set_title(titles[i])
+    return axes
+
 def add_to_class(Class):
     """Register functions as methods in created class."""
     def wrapper(obj):
