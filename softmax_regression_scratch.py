@@ -7,8 +7,6 @@ from models.model import Classifier
 from models.train import Trainer
 from models.data import FashionMNIST
 
-#from d2l import torch as d2l
-
 # X = torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
 # print(X.sum(0, keepdims=True)) # add row
 # print(X.sum(1, keepdims=True)) # add col
