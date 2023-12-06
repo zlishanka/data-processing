@@ -5,7 +5,11 @@ import torch
 from matplotlib import pyplot as plt
 #from matplotlib_inline import backend_inline
 
+# Convenient alias, convenient wrapper around the torch tensor or others' methods
+
 numpy = lambda x, *args, **kwargs: x.detach().numpy(*args, **kwargs)
+reduce_mean = lambda x, *args, **kwargs: x.mean(*args, **kwargs)
+reshape = lambda x, *args, **kwargs: x.reshape(*args, **kwargs)
 
 def cpu():
     """Get the CPU device."""

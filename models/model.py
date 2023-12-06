@@ -2,12 +2,11 @@
 import numpy as np
 import torch
 from torch import nn
-from torch.nn import functional as F 
+from torch.nn import functional as F
 
 from utils.util import HyperParameters, SGD
-from utils.util import ProgressBoard, cpu
+from utils.util import ProgressBoard, cpu, reduce_mean
 
-reduce_mean = lambda x, *args, **kwargs: x.mean(*args, **kwargs)
 class Module(nn.Module, HyperParameters):
     """The base class of models."""
     def __init__(self, plot_train_per_epoch=2, plot_valid_per_epoch=1):
@@ -15,7 +14,7 @@ class Module(nn.Module, HyperParameters):
         super().__init__()
         self.save_hyperparameters()
         self.board = ProgressBoard()
-    
+
     def loss(self, y_hat, y):
         raise NotImplementedError
 
@@ -39,26 +38,26 @@ class Module(nn.Module, HyperParameters):
         self.board.draw(x, value.to(cpu()).detach().numpy(),
                         ('train_' if train else 'val_') + key,
                         every_n=int(n))
-    
+
     def training_step(self, batch):
         """accepts a data batch to return the loss value"""
         l = self.loss(self(*batch[:-1]), batch[-1])
         self.plot('loss', l, train=True)
         return l
-    
+
     def validation_step(self, batch):
         l = self.loss(self(*batch[:-1]), batch[-1])
         self.plot('loss', l, train=False)
-    
+
     def configure_optimizer(self):
-        """returns the optimization method, or a list of them, 
+        """returns the optimization method, or a list of them,
         that is used to update the learnable parameters"""
         raise NotImplementedError
-    
+
     def configure_optimizers(self):
         return torch.optim.SGD(self.parameters(), lr=self.lr)
 
-    
+
 class LinearRegressionScratch(Module):
     """The linear regression model implemented from scratch.
 
@@ -107,8 +106,8 @@ class LinearRegression(Module):
     def get_w_b(self):
         """Defined in :numref:`sec_linear_concise`"""
         return (self.net.weight.data, self.net.bias.data)
-    
-class Classifier(Module):  #@save
+
+class Classifier(Module):
     """The base class of classification models."""
     def validation_step(self, batch):
         Y_hat = self(*batch[:-1])
@@ -121,3 +120,10 @@ class Classifier(Module):  #@save
         preds = Y_hat.argmax(axis=1).type(Y.dtype)
         compare = (preds == Y.reshape(-1)).type(torch.float32)
         return compare.mean() if averaged else compare
+
+    def layer_summary(self, X_shape):
+        """Defined in :numref:`sec_lenet`"""
+        X = torch.randn(*X_shape)
+        for layer in self.net:
+            X = layer(X)
+            print(layer.__class__.__name__, 'output shape:\t', X.shape)
