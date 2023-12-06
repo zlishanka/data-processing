@@ -2,6 +2,6 @@ torch
 torchvision
 numpy
 pandas
+matplotlib
 plotly.express
 streamlit
-d2l

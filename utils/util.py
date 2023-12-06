@@ -3,7 +3,7 @@ import inspect
 import torch
 
 from matplotlib import pyplot as plt
-from matplotlib_inline import backend_inline
+#from matplotlib_inline import backend_inline
 
 numpy = lambda x, *args, **kwargs: x.detach().numpy(*args, **kwargs)
 
@@ -13,11 +13,12 @@ def cpu():
 
 def use_svg_display():
     """Use the svg format to display a plot."""
-    backend_inline.set_matplotlib_formats('svg')
+    #backend_inline.set_matplotlib_formats('svg')
+    pass
 
 def set_figsize(figsize=(3.5, 2.5)):
     """Set the figure size for matplotlib."""
-    use_svg_display()
+    #use_svg_display()
     plt.rcParams['figure.figsize'] = figsize
 
 def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):

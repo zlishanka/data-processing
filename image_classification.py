@@ -12,12 +12,9 @@ import torchvision
 from torchvision import transforms
 import matplotlib.pyplot as plt
 
-from utils.util import use_svg_display, add_to_class, show_images
+from utils.util import  add_to_class, show_images
 from models.data import DataModule
 from models.model import Module
-
-
-use_svg_display()
 
 class FashionMNIST(DataModule):  #@save
     """The Fashion-MNIST dataset."""
@@ -31,8 +28,7 @@ class FashionMNIST(DataModule):  #@save
         self.val = torchvision.datasets.FashionMNIST(
             root=self.root, train=False, transform=trans, download=True)
 
-data = FashionMNIST(resize=(32, 32))
-print(f'Size of training set: {len(data.train)}, Size of validation set: {len(data.val)}')
+
 
 # converts between numeric labels and their names
 @add_to_class(FashionMNIST)
@@ -68,12 +64,6 @@ def visualize(self, batch, nrows=1, ncols=8, labels=[]):
     if not labels:
         labels = self.text_labels(y)
     show_images(X.squeeze(1), nrows, ncols, titles=labels)
-
-
-batch = next(iter(data.val_dataloader()))
-data.visualize(batch)
-plt.show()
-
 class Classifier(Module):  #@save
     """The base class of classification models."""
     def validation_step(self, batch):
@@ -93,4 +83,10 @@ def accuracy(self, Y_hat, Y, averaged=True):
     compare = (preds == Y.reshape(-1)).type(torch.float32)
     return compare.mean() if averaged else compare
 
+if __name__=='__main__':
+    data = FashionMNIST(resize=(32, 32))
+    print(f'Size of training set: {len(data.train)}, Size of validation set: {len(data.val)}')
+    batch = next(iter(data.val_dataloader()))
+    data.visualize(batch)
+    plt.show()
 

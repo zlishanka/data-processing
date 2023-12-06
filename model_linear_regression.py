@@ -79,8 +79,10 @@ def get_dataloader(self, train):
     i = slice(0, self.num_train) if train else slice(self.num_train, None)
     return self.get_tensorloader((self.X, self.y), train, i)
 
-model = LinearRegressionScratch(2, lr=0.03)
-data = SyntheticRegressionData(w=torch.tensor([2, -3.4]), b=4.2)
-trainer = Trainer(max_epochs=3)
-trainer.fit(model, data)
-plt.show()
+
+if __name__=='__main__':
+    model = LinearRegressionScratch(2, lr=0.03)
+    data = SyntheticRegressionData(w=torch.tensor([2, -3.4]), b=4.2)
+    trainer = Trainer(max_epochs=3)
+    trainer.fit(model, data)
+    plt.show()
